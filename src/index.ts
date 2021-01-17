@@ -7,4 +7,4 @@ export default middleware
 /* istanbul ignore next */
 export * from './ClassValidatorMiddleware'
 /* istanbul ignore next */
-export * from './WithBody'
+export * from './WithValidated'

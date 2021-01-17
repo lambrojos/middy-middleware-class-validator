@@ -5,7 +5,7 @@ import { APIGatewayProxyEvent } from 'aws-lambda'
 import { IsString } from 'class-validator'
 import middy from '@middy/core'
 import JSONErrorHandlerMiddleware from 'middy-middleware-json-error-handler'
-import ClassValidatorMiddleware, { WithBody } from '../'
+import ClassValidatorMiddleware, { WithValidated } from '../'
 
 // Define a validator for the body via class-validator
 class NameBody {
@@ -17,7 +17,7 @@ class NameBody {
 }
 
 // This is your AWS handler
-async function helloWorld (event: WithBody<APIGatewayProxyEvent, NameBody>) {
+async function helloWorld (event: WithValidated<APIGatewayProxyEvent, NameBody, 'body'>) {
   // Thanks to the validation middleware you can be sure body is typed correctly
   return {
     body: `Hello ${event.body.firstName} ${event.body.lastName}`,
@@ -30,10 +30,10 @@ async function helloWorld (event: WithBody<APIGatewayProxyEvent, NameBody>) {
 
 // Let's "middyfy" our handler, then we will be able to attach middlewares to it
 export const handler = middy(helloWorld)
-  .use(ClassValidatorMiddleware({
+  .use(ClassValidatorMiddleware({ body: {
     // Add the validation class here
     classType: NameBody
-  }))
+  }}))
   // The class validator throws validation errors from http-errors which are compatible with
   // the error handler middlewares for middy
   .use(JSONErrorHandlerMiddleware())

@@ -29,7 +29,9 @@ describe('ClassValidatorMiddleware', () => {
           response: {}
         }
         await classValidatorMiddleware({
-          classType: NameBody
+          body: {
+            classType: NameBody
+          }
         }).before(handler, next)
         expect(handler.event.body).toEqual({
           firstName: 'John',
@@ -52,9 +54,13 @@ describe('ClassValidatorMiddleware', () => {
           event: { body },
           response: {}
         }
-        await expect(classValidatorMiddleware({
-          classType: NameBody
-        }).before(handler, next)).rejects.toMatchObject({
+        await expect(
+          classValidatorMiddleware({
+            body: {
+              classType: NameBody
+            }
+          }).before(handler, next)
+        ).rejects.toMatchObject({
           statusCode: 400
         })
       })
